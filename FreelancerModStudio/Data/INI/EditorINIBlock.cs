@@ -1,21 +1,28 @@
-using System;
-using System.Collections.Generic;
-
 namespace FreelancerModStudio.Data.INI
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+
     [Serializable]
-    public class EditorINIBlock
+    [DebuggerDisplay("{Name} (#{TemplateIndex})")]
+    public class EditorIniBlock
     {
         public string Name;
-        public List<EditorINIOption> Options = new List<EditorINIOption>();
+        public List<EditorIniOption> Options = new List<EditorIniOption>();
         public int TemplateIndex;
         public int MainOptionIndex = -1;
         public string Comments;
 
-        public EditorINIBlock(string name, int templateIndex)
+        public EditorIniBlock(string name, int templateIndex)
         {
-            Name = name;
-            TemplateIndex = templateIndex;
+            this.Name = name;
+            this.TemplateIndex = templateIndex;
+        }
+
+        public EditorIniBlock()
+        {
+            
         }
     }
 }

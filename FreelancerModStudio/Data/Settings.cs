@@ -1,41 +1,35 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Windows.Forms;
-using System.Xml.Serialization;
-
 namespace FreelancerModStudio.Data
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Drawing;
+    using System.Globalization;
+    using System.IO;
+    using System.Windows.Forms;
+    using System.Windows.Media;
+    using System.Xml.Serialization;
+
+    using FreelancerModStudio.Controls;
+    using FreelancerModStudio.Data.INI;
+    using FreelancerModStudio.SystemDesigner;
+    using FreelancerModStudio.SystemDesigner.Content;
+
+    using Color = System.Windows.Media.Color;
+    using ColorD = System.Drawing.Color;
+
     public class Settings
     {
-        const int CURRENT_VERSION = 1;
-        //const string FREELANCER_REGISTRY_KEY = "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Microsoft Games\\Freelancer\\1.0";
-        //const string FREELANCER_REGISTRY_VALUE = "AppPath";
+        private const int CURRENT_VERSION = 1;
 
+        // const string FREELANCER_REGISTRY_KEY = "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Microsoft Games\\Freelancer\\1.0";
+        // const string FREELANCER_REGISTRY_VALUE = "AppPath";
         public SettingsData Data = new SettingsData();
 
-        public void Load(Stream stream)
-        {
-            Data = (SettingsData)Serializer.Load(stream, typeof(SettingsData));
-        }
-
-        public void Load(string path)
-        {
-            Data = (SettingsData)Serializer.Load(path, typeof(SettingsData));
-        }
-
-        public void Save(Stream stream)
-        {
-            Serializer.Save(stream, Data, typeof(SettingsData));
-        }
-
-        public void Save(string path)
-        {
-            Serializer.Save(path, Data, typeof(SettingsData));
-        }
+        public void Load(Stream stream) => this.Data = (SettingsData)Serializer.Load(stream, typeof(SettingsData));
+        public void Load(string path) => this.Data = (SettingsData)Serializer.Load(path, typeof(SettingsData));
+        public void Save(Stream stream) => Serializer.Save(stream, this.Data, typeof(SettingsData));
+        public void Save(string path) => Serializer.Save(path, this.Data, typeof(SettingsData));
 
         [XmlRoot("FreelancerModStudio-Settings-1.0")]
         public class SettingsData
@@ -59,7 +53,7 @@ namespace FreelancerModStudio.Data
             public LanguageType Language { get; set; }
 
             [Category("General")]
-            [DisplayName("Default Freelancer DATA folder")]
+            [DisplayName("Fallback Freelancer DATA folder")]
             public string DefaultDataDirectory { get; set; }
 
             [Category("Properties")]
@@ -73,22 +67,38 @@ namespace FreelancerModStudio.Data
             [XmlIgnore]
             [Category("INI Editor")]
             [DisplayName("Added row color")]
-            public Color EditorModifiedAddedColor { get; set; }
+            public ColorD EditorModifiedAddedColor { get; set; }
 
             [XmlIgnore]
             [Category("INI Editor")]
             [DisplayName("Modified row color")]
-            public Color EditorModifiedColor { get; set; }
+            public ColorD EditorModifiedColor { get; set; }
 
             [XmlIgnore]
             [Category("INI Editor")]
             [DisplayName("Saved row color")]
-            public Color EditorModifiedSavedColor { get; set; }
+            public ColorD EditorModifiedSavedColor { get; set; }
 
             [XmlIgnore]
             [Category("INI Editor")]
             [DisplayName("Hidden text color")]
-            public Color EditorHiddenColor { get; set; }
+            public ColorD EditorHiddenColor { get; set; }
+
+            [Category("INI Editor")]
+            [DisplayName("Templates")]
+            public ObjectTemplate Templates { get; set; }
+
+            [Category("INI Editor")]
+            [DisplayName("Ignored 3D Editor Types")]
+            public List<ContentType> IgnoredEditorTypes { get; set; } = new List<ContentType>()
+                                                                            {
+                                                                                ContentType.ZonePath,
+                                                                                ContentType.ZoneVignette
+                                                                            };
+
+            [Category("INI Editor")]
+            [DisplayName("Round floating point values")]
+            public bool RoundFloatingPointValues { get; set; } = false;
 
             [Category("INI Formatting")]
             [DisplayName("Spaces around equal sign")]
@@ -102,113 +112,96 @@ namespace FreelancerModStudio.Data
             [DisplayName("Comments")]
             public bool FormattingComments { get; set; }
 
+            [Category("INI Formatting")]
+            [DisplayName("Only insert objects at bottom of INI")]
+            public bool OnlyInsertObjectsAtIniBottom { get; set; }
+
+            [Category("INI Formatting")]
+            [DisplayName("Alert when providing invalid ini property type")]
+            public bool AlertIncorrectPropertyType { get; set; }
+
             [Browsable(false)]
-            public string EditorModifiedAddedColorXML
+            public string EditorModifiedAddedColorXml
             {
-                get
-                {
-                    return ColorTranslator.ToHtml(EditorModifiedAddedColor);
-                }
-                set
-                {
-                    EditorModifiedAddedColor = ColorTranslator.FromHtml(value);
-                }
+                get => ColorTranslator.ToHtml(this.EditorModifiedAddedColor);
+                set => this.EditorModifiedAddedColor = ColorTranslator.FromHtml(value);
             }
 
             [Browsable(false)]
-            public string EditorModifiedColorXML
+            public string EditorModifiedColorXml
             {
-                get
-                {
-                    return ColorTranslator.ToHtml(EditorModifiedColor);
-                }
-                set
-                {
-                    EditorModifiedColor = ColorTranslator.FromHtml(value);
-                }
+                get => ColorTranslator.ToHtml(this.EditorModifiedColor);
+                set => this.EditorModifiedColor = ColorTranslator.FromHtml(value);
             }
 
             [Browsable(false)]
-            public string EditorModifiedSavedColorXML
+            public string EditorModifiedSavedColorXml
             {
-                get
-                {
-                    return ColorTranslator.ToHtml(EditorModifiedSavedColor);
-                }
-                set
-                {
-                    EditorModifiedSavedColor = ColorTranslator.FromHtml(value);
-                }
+                get => ColorTranslator.ToHtml(this.EditorModifiedSavedColor);
+                set => this.EditorModifiedSavedColor = ColorTranslator.FromHtml(value);
             }
 
             [Browsable(false)]
-            public string EditorHiddenColorXML
+            public string EditorHiddenColorXml
             {
-                get
-                {
-                    return ColorTranslator.ToHtml(EditorHiddenColor);
-                }
-                set
-                {
-                    EditorHiddenColor = ColorTranslator.FromHtml(value);
-                }
+                get => ColorTranslator.ToHtml(this.EditorHiddenColor);
+                set => this.EditorHiddenColor = ColorTranslator.FromHtml(value);
             }
+
+            [XmlElement("ColorBox")]
+            public ColorBox ColorBox { get; set; }
 
             public AutoUpdate AutoUpdate { get; set; }
 
             public General()
             {
                 // set default values
-                RecentFilesCount = 4;
-                Language = LanguageType.English;
+                this.RecentFilesCount = 4;
+                this.Language = LanguageType.English;
 
-                PropertiesSortType = PropertySort.NoSort;
-                PropertiesShowHelp = false;
+                this.PropertiesSortType = PropertySort.NoSort;
+                this.PropertiesShowHelp = false;
 
-                EditorModifiedAddedColor = Color.FromArgb(255, 255, 164);
-                EditorModifiedColor = Color.FromArgb(255, 227, 164);
-                EditorModifiedSavedColor = Color.FromArgb(192, 255, 192);
-                EditorHiddenColor = Color.FromArgb(128, 128, 128);
+                this.EditorModifiedAddedColor = ColorD.FromArgb(255, 255, 164);
+                this.EditorModifiedColor = ColorD.FromArgb(255, 227, 164);
+                this.EditorModifiedSavedColor = ColorD.FromArgb(192, 255, 192);
+                this.EditorHiddenColor = ColorD.FromArgb(128, 128, 128);
 
-                FormattingSpaces = true;
-                FormattingEmptyLine = true;
-                FormattingComments = true;
+                this.FormattingSpaces = true;
+                this.FormattingEmptyLine = true;
+                this.FormattingComments = true;
+                this.AlertIncorrectPropertyType = true;
+                this.OnlyInsertObjectsAtIniBottom = false;
 
-                AutoUpdate = new AutoUpdate
-                    {
-                        Enabled = true,
-                        Proxy = new Proxy(),
-                    };
-                SetDefaultAutoUpdate();
+                this.AutoUpdate = new AutoUpdate { Enabled = true, Proxy = new Proxy(), };
+                this.SetDefaultAutoUpdate();
+                this.ColorBox = new ColorBox();
+                this.Templates = new ObjectTemplate();
             }
 
             public void CheckVersion()
             {
-                if (Version < CURRENT_VERSION)
+                if (this.Version < CURRENT_VERSION)
                 {
-                    SetDefaultAutoUpdate();
-                    //DefaultDataDirectory = Registry.GetValue(FREELANCER_REGISTRY_KEY, FREELANCER_REGISTRY_VALUE, null) as string;
+                    this.SetDefaultAutoUpdate();
 
-                    Version = CURRENT_VERSION;
+                    // DefaultDataDirectory = Registry.GetValue(FREELANCER_REGISTRY_KEY, FREELANCER_REGISTRY_VALUE, null) as string;
+                    this.Version = CURRENT_VERSION;
                 }
             }
 
             public void CheckValidData()
             {
-                if (DefaultDataDirectory != null)
-                {
-                    if (!Directory.Exists(DefaultDataDirectory))
-                    {
-                        DefaultDataDirectory = null;
-                    }
-                }
+                if (this.DefaultDataDirectory != null)
+                    if (!Directory.Exists(this.DefaultDataDirectory))
+                        this.DefaultDataDirectory = null;
             }
 
-            void SetDefaultAutoUpdate()
+            private void SetDefaultAutoUpdate()
             {
-                AutoUpdate.CheckInterval = 28;
-                AutoUpdate.SilentDownload = false;
-                AutoUpdate.UpdateFile = @"http://freelancermodstudio.googlecode.com/svn/trunk/updates.txt";
+                this.AutoUpdate.CheckInterval = 28;
+                this.AutoUpdate.SilentDownload = true;
+                this.AutoUpdate.UpdateFile = @"https://raw.githubusercontent.com/AftermathFreelancer/FLModStudio/master/updates.txt";
             }
         }
 
@@ -258,10 +251,77 @@ namespace FreelancerModStudio.Data
             public string Password { get; set; }
         }
 
+        [Category("Colours")]
+        [DisplayName("Colours")]
+        [TypeConverter(typeof(SettingsConverter))]
+        public class ColorBox
+        {
+            [DisplayName("Construct")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "Construct")]
+            public Color Construct { get; set; } = Colors.Fuchsia;
+
+            [DisplayName("Depot")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "Depot")]
+            public Color Depot { get; set; } = Colors.SlateGray;
+
+            [DisplayName("DockingRing")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "DockingRing")]
+            public Color DockingRing { get; set; } = Colors.DimGray;
+
+            [DisplayName("JumpGate")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "JumpGate")]
+            public Color JumpGate { get; set; } = Colors.Green;
+
+            [DisplayName("JumpHole")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "JumpHole")]
+            public Color JumpHole { get; set; } = Colors.Firebrick;
+
+            [DisplayName("Planet")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "Planet")]
+            public Color Planet { get; set; } = Color.FromRgb(0, 60, 120);
+
+            [DisplayName("Satellite")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "Satellite")]
+            public Color Satellite { get; set; } = Colors.BlueViolet;
+
+            [DisplayName("Ship")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "Ship")]
+            public Color Ship { get; set; } = Colors.Gold;
+
+            [DisplayName("Station")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "Station")]
+            public Color Station { get; set; } = Colors.Orange;
+
+            [DisplayName("Sun")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "Sun")]
+            public Color Sun { get; set; } = Colors.OrangeRed;
+
+            [DisplayName("Tradelane")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "Tradelane")]
+            public Color Tradelane { get; set; } = Colors.Cyan;
+
+            [DisplayName("Weapons Platforms")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "WeaponsPlatform")]
+            public Color WeaponsPlatform { get; set; } = Colors.BurlyWood;
+
+            [DisplayName("ZoneVigentte")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "ZoneVignette")]
+            public Color ZoneVignette { get; set; } = Color.FromRgb(0, 30, 15);
+
+            [DisplayName("ZonePathTrade")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "ZonePathTrade")]
+            public Color ZonePathTrade { get; set; } = Color.FromRgb(0, 30, 30);
+
+            [DisplayName("ZonePathTradelane")]
+            [XmlElement(Type = typeof(XmlColor), ElementName = "ZonePathTradeLane")]
+            public Color ZonePathTradeLane { get; set; } = Color.FromRgb(0, 30, 30);
+        }
+
         public class Forms
         {
             public Main Main = new Main();
-            //public NewMod NewMod = new NewMod();
+
+            // public NewMod NewMod = new NewMod();
             public ChooseFileType ChooseFileType = new ChooseFileType();
         }
 
@@ -271,9 +331,11 @@ namespace FreelancerModStudio.Data
             public List<RecentFile> RecentFiles = new List<RecentFile>();
 
             public Point Location;
+
             public Size Size;
 
             public bool Maximized;
+
             public bool FullScreen;
         }
 
@@ -282,7 +344,6 @@ namespace FreelancerModStudio.Data
             public string ModSaveLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Mods");
             public Size Size;
         }*/
-
         public class ChooseFileType
         {
             public int SelectedFileType;
@@ -291,7 +352,50 @@ namespace FreelancerModStudio.Data
         public class RecentFile
         {
             public string File;
+
             public int TemplateIndex = -1;
+        }
+
+        [TypeConverter(typeof(SettingsConverter))]
+        public class ObjectTemplate
+        {
+            public List<EditorIniBlock> Templates { get; set; }
+            /*public string nickname { get; set; }
+            public string ids_name { get; set; }
+            public string pos { get; set; }
+            public string rotate { get; set; }
+            public string ambient_color { get; set; }
+            public string archetype { get; set; }
+            public string star { get; set; }
+            public string spin { get; set; }
+            public string msg_id_prefix { get; set; }
+            public string jump_effect { get; set; }
+            public string atmosphere_range { get; set; }
+            public string burn_color { get; set; }
+            public string prev_ring { get; set; }
+            public string next_ring { get; set; }
+            public string ids_info  { get; set; }
+            public string ring { get; set; }
+            public string Base { get; set; }
+            public string dock_with { get; set; }
+            public string Ambient { get; set; }
+            public string visit { get; set; }
+            public string reputation { get; set; }
+            public string tradelane_space_name { get; set; }
+            public string behavior { get; set; }
+            public string voice { get; set; }
+            public string space_costume { get; set; }
+            public string faction { get; set; }
+            public string difficulty_level { get; set; }
+            public string Goto { get; set; }
+            public string loadout { get; set; }
+            public string pilot { get; set; }
+            public string parent { get; set; }*/
+
+            public ObjectTemplate()
+            {
+                this.Templates = new List<EditorIniBlock>();
+            }
         }
     }
 
@@ -303,14 +407,7 @@ namespace FreelancerModStudio.Data
 
     public class SettingsConverter : ExpandableObjectConverter
     {
-        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
-        {
-            return string.Empty;
-        }
-
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-        {
-            return false;
-        }
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType) => string.Empty;
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) => false;
     }
 }

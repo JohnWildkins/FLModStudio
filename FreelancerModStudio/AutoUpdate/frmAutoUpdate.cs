@@ -4,6 +4,8 @@ using FreelancerModStudio.Properties;
 
 namespace FreelancerModStudio.AutoUpdate
 {
+    using FLUtils;
+
     public partial class frmAutoUpdate : Form, IAutoUpdateUI
     {
         StatusType _currentPage;
@@ -57,7 +59,7 @@ namespace FreelancerModStudio.AutoUpdate
                     pgbDownload.Style = ProgressBarStyle.Marquee;
 
                     lblHeader.Text = Strings.UpdatesCheckingHeader;
-                    lblDescription.Text = string.Format(Strings.UpdatesCheckingDescription, Helper.Assembly.Name);
+                    lblDescription.Text = string.Format(Strings.UpdatesCheckingDescription,  AssemblyUtils.Name);
 
                     btnAbort.Text = Strings.UpdatesAbortButton;
 
@@ -72,7 +74,7 @@ namespace FreelancerModStudio.AutoUpdate
                     btnAbort.Visible = true;
 
                     lblHeader.Text = Strings.UpdatesAviableHeader;
-                    lblDescription.Text = string.Format(Strings.UpdatesAviableDescription, Helper.Assembly.Name);
+                    lblDescription.Text = string.Format(Strings.UpdatesAviableDescription,  AssemblyUtils.Name);
 
                     btnNext.Text = Strings.UpdatesDownloadButton;
                     btnAbort.Text = Strings.UpdatesAbortButton;
@@ -88,7 +90,7 @@ namespace FreelancerModStudio.AutoUpdate
                     btnAbort.Visible = true;
 
                     lblHeader.Text = Strings.UpdatesNotAviableHeader;
-                    lblDescription.Text = string.Format(Strings.UpdatesNotAviableDescription, Helper.Assembly.Name);
+                    lblDescription.Text = string.Format(Strings.UpdatesNotAviableDescription,  AssemblyUtils.Name);
 
                     btnAbort.Text = Strings.UpdatesFinishButton;
 
@@ -105,7 +107,7 @@ namespace FreelancerModStudio.AutoUpdate
                     pgbDownload.Style = ProgressBarStyle.Blocks;
 
                     lblHeader.Text = Strings.UpdatesDownloadingHeader;
-                    lblDescription.Text = string.Format(Strings.UpdatesDownloadingDescription, Helper.Assembly.Name);
+                    lblDescription.Text = string.Format(Strings.UpdatesDownloadingDescription,  AssemblyUtils.Name);
 
                     btnNext.Text = Strings.UpdatesHideButton;
                     btnAbort.Text = Strings.UpdatesAbortButton;
@@ -121,7 +123,7 @@ namespace FreelancerModStudio.AutoUpdate
                     btnAbort.Visible = true;
 
                     lblHeader.Text = Strings.UpdatesDownloadedHeader;
-                    lblDescription.Text = string.Format(Strings.UpdatesDownloadedDescription, Helper.Assembly.Name);
+                    lblDescription.Text = string.Format(Strings.UpdatesDownloadedDescription,  AssemblyUtils.Name);
 
                     btnNext.Text = Strings.UpdatesInstallButton;
                     btnAbort.Text = Strings.UpdatesLaterButton;

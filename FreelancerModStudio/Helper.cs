@@ -1,52 +1,40 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Windows.Forms;
-using FreelancerModStudio.AutoUpdate;
-using FreelancerModStudio.Data;
-using FreelancerModStudio.Properties;
-
 namespace FreelancerModStudio
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using System.Threading;
+    using System.Windows.Forms;
+
+    using FLUtils;
+
+    using FreelancerModStudio.AutoUpdate;
+    using FreelancerModStudio.Data;
+    using FreelancerModStudio.Properties;
+    using FreelancerModStudio.SystemDesigner;
+
     internal static class Helper
     {
-        public struct Program
+        internal struct Program
         {
             public static void Start()
             {
-#if DEBUG
-                Stopwatch st = new Stopwatch();
-                st.Start();
-#endif
-                //load settings
+                // load settings
                 Settings.Load();
 
-                //install downloaded update if it exists
+                // install downloaded update if it exists
                 if (Settings.Data.Data.General.AutoUpdate.Update.Downloaded)
-                {
                     if (AutoUpdate.AutoUpdate.InstallUpdate())
-                    {
                         return;
-                    }
-                }
 
                 Template.Load();
-#if DEBUG
-                st.Stop();
-                Debug.WriteLine("loading settings.xml and template.xml: " + st.ElapsedMilliseconds + "ms");
-#endif
 
-                //whidbey color table (gray colors of menustrip and tabstrip)
-                ProfessionalColorTable whidbeyColorTable = new ProfessionalColorTable
-                    {
-                        UseSystemColors = true
-                    };
+                // whidbey color table (gray colors of menustrip and tabstrip)
+                ProfessionalColorTable whidbeyColorTable = new ProfessionalColorTable { UseSystemColors = true };
                 ToolStripManager.Renderer = new ToolStripProfessionalRenderer(whidbeyColorTable);
 
                 //remove installed update if it exists
@@ -56,20 +44,21 @@ namespace FreelancerModStudio
                 }
 
                 //check for update
-                if (Settings.Data.Data.General.AutoUpdate.Enabled && Settings.Data.Data.General.AutoUpdate.UpdateFile != null && Settings.Data.Data.General.AutoUpdate.LastCheck.Date.AddDays(Settings.Data.Data.General.AutoUpdate.CheckInterval) <= DateTime.Now.Date)
+                if (Settings.Data.Data.General.AutoUpdate.Enabled && Settings.Data.Data.General.AutoUpdate.UpdateFile != null && 
+                    Settings.Data.Data.General.AutoUpdate.LastCheck.Date.AddDays(Settings.Data.Data.General.AutoUpdate.CheckInterval) <= DateTime.Now.Date)
                 {
                     Update.Check(true, Settings.Data.Data.General.AutoUpdate.SilentDownload);
                 }
 
-                //start main form
-                Application.Run(new frmMain());
+                // start main form
+                Application.Run(new MainForm());
 
-                //save settings
+                // save settings
                 Settings.Save();
             }
         }
 
-        public struct Update
+        internal struct Update
         {
             public static AutoUpdate.AutoUpdate AutoUpdate = new AutoUpdate.AutoUpdate();
 
@@ -86,7 +75,7 @@ namespace FreelancerModStudio
                 {
                     if (!silentCheck)
                     {
-                        MessageBox.Show(string.Format(Strings.UpdatesDownloadException, Assembly.Name), Assembly.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(string.Format(Strings.UpdatesDownloadException,  AssemblyUtils.Name),  AssemblyUtils.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
 
                     Settings.Data.Data.General.AutoUpdate.LastCheck = DateTime.Now;
@@ -115,9 +104,9 @@ namespace FreelancerModStudio
             }
         }
 
-        public struct Template
+        internal struct Template
         {
-            static FreelancerModStudio.Data.Template _data;
+            private static FreelancerModStudio.Data.Template data;
 
             public static void Load()
             {
@@ -126,14 +115,14 @@ namespace FreelancerModStudio
 
             public static void Load(string file)
             {
-                _data = new FreelancerModStudio.Data.Template();
+                data = new FreelancerModStudio.Data.Template();
 
                 try
                 {
-                    _data.Load(file);
+                    data.Load(file);
                     Data.SetSpecialFiles();
                 }
-                catch (Exception ex)
+                catch (IOException ex)
                 {
                     Exceptions.Show(string.Format(Strings.TemplateLoadException, Resources.TemplatePath), ex);
                     Environment.Exit(0);
@@ -152,22 +141,15 @@ namespace FreelancerModStudio
 
                 public static List<FreelancerModStudio.Data.Template.File> Files
                 {
-                    get
-                    {
-                        return _data.Data.Files;
-                    }
-                    set
-                    {
-                        _data.Data.Files = value;
-                    }
+                    get => data.Data.Files;
+                    set => data.Data.Files = value;
                 }
 
-                //public static FreelancerModStudio.Data.Template.CostumTypes CostumTypes
-                //{
-                //    get { return data.Data.CostumTypes; }
-                //    set { data.Data.CostumTypes = value; }
-                //}
-
+                // public static FreelancerModStudio.Data.Template.CostumTypes CostumTypes
+                // {
+                // get { return data.Data.CostumTypes; }
+                // set { data.Data.CostumTypes = value; }
+                // }
                 public static int GetIndex(string file)
                 {
                     for (int i = 0; i < Files.Count; ++i)
@@ -181,6 +163,7 @@ namespace FreelancerModStudio
                             }
                         }
                     }
+
                     return -1;
                 }
 
@@ -204,8 +187,10 @@ namespace FreelancerModStudio
                         {
                             break;
                         }
+
                         builder.Remove(lastIndex, builder.Length - lastIndex);
                     }
+
                     return builder.ToString();
                 }
 
@@ -251,12 +236,16 @@ namespace FreelancerModStudio
             }
         }
 
-        public struct Settings
+        internal struct Settings
         {
             public static Data.Settings Data;
 
             public static void Save()
             {
+                // Remove all templates that are manually created
+                Data.Data.General.Templates.Templates = Data.Data.General.Templates.Templates.Where(x => !string.IsNullOrWhiteSpace(x.Name) && x.TemplateIndex > 0).ToList();
+                LoadTemplates();
+
                 string file = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Application.ProductName), Resources.SettingsPath);
                 try
                 {
@@ -268,7 +257,7 @@ namespace FreelancerModStudio
 
                     Data.Save(file);
                 }
-                catch (Exception ex)
+                catch (IOException ex)
                 {
                     Exceptions.Show(string.Format(Strings.SettingsSaveException, Resources.SettingsPath), ex);
                 }
@@ -285,7 +274,7 @@ namespace FreelancerModStudio
                     {
                         Data.Load(file);
                     }
-                    catch (Exception ex)
+                    catch (IOException ex)
                     {
                         Exceptions.Show(string.Format(Strings.SettingsLoadException, Resources.SettingsPath), ex);
                     }
@@ -294,6 +283,29 @@ namespace FreelancerModStudio
                 // check for valid data
                 Data.Data.General.CheckVersion();
                 Data.Data.General.CheckValidData();
+                SharedGeometries.LoadColors(Data.Data.General.ColorBox);
+
+                if (Data.Data.General.AutoUpdate.UpdateFile == @"http://freelancermodstudio.googlecode.com/svn/trunk/updates.txt")
+                    Data.Data.General.AutoUpdate.UpdateFile = @"https://raw.githubusercontent.com/AftermathFreelancer/FLModStudio/master/updates.txt";
+            }
+
+            public static void LoadTemplates()
+            {
+                // Form is closing
+                if (FrmTableEditor.Instance.IsDisposed)
+                    return;
+
+                ToolStripMenuItem add = (ToolStripMenuItem)FrmTableEditor.Instance.TableContextMenu.Items["mnuAdd"];
+                ToolStripMenuItem items = (ToolStripMenuItem)add.DropDownItems["mnuFromTemplate"];
+                items.DropDownItems.Clear();
+                foreach (var template in Settings.Data.Data.General.Templates.Templates)
+                {
+                    var item = new ToolStripMenuItem();
+                    item.Click += FrmTableEditor.Instance.AddTemplate;
+                    item.Tag = template.TemplateIndex;
+                    item.Text = template.Options.First(x => x.Name == "nickname").Values.First().ToString();
+                    items.DropDownItems.Add(item);
+                }
             }
 
             public static string ShortLanguage
@@ -307,6 +319,7 @@ namespace FreelancerModStudio
 
                     return "en";
                 }
+
                 set
                 {
                     if (value.Equals("de", StringComparison.OrdinalIgnoreCase))
@@ -321,7 +334,7 @@ namespace FreelancerModStudio
             }
         }
 
-        public struct Thread
+        internal struct Thread
         {
             public static void Start(ref System.Threading.Thread thread, ThreadStart threadDelegate, ThreadPriority priority, bool isBackground)
             {
@@ -354,7 +367,7 @@ namespace FreelancerModStudio
             }
         }
 
-        public struct Compare
+        internal struct Compare
         {
             public static bool Size(Point checkSize, Point currentSize, bool bigger)
             {
@@ -372,89 +385,27 @@ namespace FreelancerModStudio
             }
         }
 
-        public struct String
+        internal struct String
         {
             public static readonly StringBuilder StringBuilder = new StringBuilder();
         }
 
-        public struct Exceptions
+        internal class Exceptions
         {
             public static void Show(Exception exception)
             {
-                MessageBox.Show(Get(exception), Assembly.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ExceptionUtils.Get(exception),  AssemblyUtils.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             public static void Show(string errorDescription, Exception exception)
             {
-                MessageBox.Show(errorDescription + Environment.NewLine + Environment.NewLine + Get(exception), Assembly.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    errorDescription + Environment.NewLine + Environment.NewLine + ExceptionUtils.Get(exception),
+                     AssemblyUtils.Name,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
 
-            public static string Get(Exception exception)
-            {
-                StringBuilder stringBuilder = new StringBuilder(exception.Message);
-
-                if (exception.InnerException != null)
-                {
-                    stringBuilder.Append(Environment.NewLine + Environment.NewLine + Get(exception.InnerException));
-                }
-
-                return stringBuilder.ToString();
-            }
-        }
-
-        public struct Assembly
-        {
-            public static string Name
-            {
-                get
-                {
-                    return Application.ProductName;
-                }
-            }
-
-            public static Version Version
-            {
-                get
-                {
-                    return new Version(Application.ProductVersion);
-                }
-            }
-
-            public static string Company
-            {
-                get
-                {
-                    return Application.CompanyName;
-                }
-            }
-
-            public static string Description
-            {
-                get
-                {
-                    object[] attributes = System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
-                    if (attributes.Length == 0)
-                    {
-                        return string.Empty;
-                    }
-
-                    return ((AssemblyDescriptionAttribute)attributes[0]).Description;
-                }
-            }
-
-            public static string Copyright
-            {
-                get
-                {
-                    object[] attributes = System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-                    if (attributes.Length == 0)
-                    {
-                        return string.Empty;
-                    }
-
-                    return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
-                }
-            }
         }
     }
 }

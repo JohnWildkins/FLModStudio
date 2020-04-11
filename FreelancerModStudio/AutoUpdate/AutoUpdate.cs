@@ -9,6 +9,8 @@ using FreelancerModStudio.Properties;
 
 namespace FreelancerModStudio.AutoUpdate
 {
+    using FLUtils;
+
     public class AutoUpdate : IDisposable
     {
         public StatusType Status { get; set; }
@@ -103,7 +105,7 @@ namespace FreelancerModStudio.AutoUpdate
                 _updateInfo = UpdateInformationParser.Parse(fileContent);
                 if (_updateInfo != null)
                 {
-                    return _updateInfo.Version > Helper.Assembly.Version;
+                    return _updateInfo.Version > AssemblyUtils.Version;
                 }
             }
             catch (Exception ex)
@@ -165,7 +167,7 @@ namespace FreelancerModStudio.AutoUpdate
 
                     if (!SilentCheck)
                     {
-                        Helper.Exceptions.Show(string.Format(Strings.UpdatesDownloadException, Helper.Assembly.Name), e.Error);
+                        Helper.Exceptions.Show(string.Format(Strings.UpdatesDownloadException, AssemblyUtils.Name), e.Error);
                     }
                 }
             }
@@ -202,7 +204,7 @@ namespace FreelancerModStudio.AutoUpdate
 
                     if (!SilentCheck)
                     {
-                        Helper.Exceptions.Show(string.Format(Strings.UpdatesDownloadException, Helper.Assembly.Name), e.Error);
+                        Helper.Exceptions.Show(string.Format(Strings.UpdatesDownloadException,  AssemblyUtils.Name), e.Error);
                     }
                 }
             }
