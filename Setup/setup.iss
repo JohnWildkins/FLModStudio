@@ -10,16 +10,16 @@
 #include "scripts\products\dotnetfx35sp1.iss"
 
 #define MyAppSetupName 'Freelancer Mod Studio'
-#define MyAppVersion '1.3'
+#define MyAppVersion '1.3.1.0'
 
 [Setup]
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppSetupName} {#MyAppVersion}
-AppCopyright=Copyright © stfx 2009-2013
+AppCopyright=Copyright © stfx 2009-2013, Freelancer Aftermath 2019-2020
 VersionInfoVersion={#MyAppVersion}
-VersionInfoCompany=stfx
-AppPublisher=stfx                                             
+VersionInfoCompany=Freelancer Aftermath
+AppPublisher=Freelancer Aftermath                                             
 AppPublisherURL=https://github.com/AftermathFreelancer/FLModStudio
 AppUpdatesURL=https://raw.githubusercontent.com/AftermathFreelancer/FLModStudio/master/updates.txt
 OutputBaseFilename=FreelancerModStudio-{#MyAppVersion}
@@ -150,6 +150,7 @@ Source: "..\FreelancerModStudio\bin\Release\System.Xml.XmlSerializer.dll"; DestD
 Source: "..\FreelancerModStudio\bin\Release\System.Xml.XPath.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\FreelancerModStudio\bin\Release\System.Xml.XPath.XDocument.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\FreelancerModStudio\bin\Release\WeifenLuo.WinFormsUI.Docking.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\FreelancerModStudio\bin\Release\WeifenLuo.WinFormsUI.Docking.ThemeVS2015.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\FreelancerModStudio\bin\Release\de\FreelancerModStudio.resources.dll"; DestDir: "{app}\de"; Flags: ignoreversion
 Source: "..\FreelancerModStudio\bin\Release\Template.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "src\Settings_en.xml"; DestName: "FreelancerModStudio.xml"; DestDir: "{userappdata}\Freelancer Mod Studio"; Languages: en; Flags: onlyifdoesntexist
