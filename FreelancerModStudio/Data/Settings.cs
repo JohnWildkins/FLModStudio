@@ -100,6 +100,10 @@ namespace FreelancerModStudio.Data
             [DisplayName("Round floating point values")]
             public bool RoundFloatingPointValues { get; set; } = false;
 
+            [Category("INI Editor")]
+            [DisplayName("Automatically Open 3D Editor")]
+            public bool AutomaticallyOpen3DEditor { get; set; } = true;
+
             [Category("INI Formatting")]
             [DisplayName("Spaces around equal sign")]
             public bool FormattingSpaces { get; set; }

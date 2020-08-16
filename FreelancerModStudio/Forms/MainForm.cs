@@ -532,6 +532,11 @@ namespace FreelancerModStudio
             tableEditor.FormClosed += this.DefaultEditorFormClosed;
             tableEditor.Show(this.dockPanel1, DockState.Document);
 
+            if (tableEditor.CanDisplay3DViewer() && Helper.Settings.Data.Data.General.AutomaticallyOpen3DEditor)
+            {
+                this.Open3DSystemEditor(tableEditor);
+            }
+
             return tableEditor;
         }
 
@@ -1201,23 +1206,29 @@ namespace FreelancerModStudio
             this.SetContentMenus(content);
         }
 
-        private void Mnu3dEditorClick(object sender, EventArgs e)
+        private void Open3DSystemEditor(FrmTableEditor tableEditor = null)
         {
             if (this.systemEditorForm == null)
             {
                 this.InitSystemEditor();
             }
 
-            // system editor is never null as it was initialized above if that was the case
-            // ReSharper disable PossibleNullReferenceException
             this.systemEditorForm.Show(this.dockPanel1);
 
-            // ReSharper restore PossibleNullReferenceException
-            FrmTableEditor tableEditor = this.dockPanel1.ActiveDocument as FrmTableEditor;
+            if (tableEditor is null)
+            {
+                tableEditor = this.dockPanel1.ActiveDocument as FrmTableEditor;
+            }
+
             if (tableEditor != null)
             {
                 this.ShowSystemEditor(tableEditor);
             }
+        }
+
+        private void Mnu3dEditorClick(object sender, EventArgs e)
+        { 
+            Open3DSystemEditor();
         }
 
         private void SystemEditorFileOpen(string path)
