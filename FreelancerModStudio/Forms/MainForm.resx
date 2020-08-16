@@ -643,7 +643,7 @@
     <value>&amp;Options...</value>
   </data>
   <data name="mnuTools.Size" type="System.Drawing.Size, System.Drawing">
-    <value>47, 20</value>
+    <value>46, 20</value>
   </data>
   <data name="mnuTools.Text" xml:space="preserve">
     <value>&amp;Tools</value>
@@ -823,7 +823,7 @@
     <value>dockPanel1</value>
   </data>
   <data name="&gt;&gt;dockPanel1.Type" xml:space="preserve">
-    <value>WeifenLuo.WinFormsUI.Docking.DockPanel, WeifenLuo.WinFormsUI.Docking, Version=2.3.7392.25597, Culture=neutral, PublicKeyToken=null</value>
+    <value>WeifenLuo.WinFormsUI.Docking.DockPanel, WeifenLuo.WinFormsUI.Docking, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
   </data>
   <data name="&gt;&gt;dockPanel1.Parent" xml:space="preserve">
     <value>$this</value>
@@ -910,7 +910,7 @@
     <value>Open containing &amp;folder</value>
   </data>
   <data name="contextMenuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>198, 186</value>
+    <value>198, 164</value>
   </data>
   <data name="&gt;&gt;contextMenuStrip1.Name" xml:space="preserve">
     <value>contextMenuStrip1</value>
@@ -1329,6 +1329,18 @@
   <data name="&gt;&gt;mnuClose2.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;mnuCloseOther.Name" xml:space="preserve">
+    <value>mnuCloseOther</value>
+  </data>
+  <data name="&gt;&gt;mnuCloseOther.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;MnuCloseAllUnchanged.Name" xml:space="preserve">
+    <value>MnuCloseAllUnchanged</value>
+  </data>
+  <data name="&gt;&gt;MnuCloseAllUnchanged.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;MnuCloseAllToLeft.Name" xml:space="preserve">
     <value>MnuCloseAllToLeft</value>
   </data>
@@ -1339,12 +1351,6 @@
     <value>MnuCloseAllToRight</value>
   </data>
   <data name="&gt;&gt;MnuCloseAllToRight.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuCloseOther.Name" xml:space="preserve">
-    <value>mnuCloseOther</value>
-  </data>
-  <data name="&gt;&gt;mnuCloseOther.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuCopyFullPathSeperator.Name" xml:space="preserve">
@@ -1363,12 +1369,6 @@
     <value>mnuOpenContainingFolder</value>
   </data>
   <data name="&gt;&gt;mnuOpenContainingFolder.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;MnuCloseAllUnchanged.Name" xml:space="preserve">
-    <value>MnuCloseAllUnchanged</value>
-  </data>
-  <data name="&gt;&gt;MnuCloseAllUnchanged.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">

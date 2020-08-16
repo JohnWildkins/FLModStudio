@@ -476,7 +476,7 @@ namespace FreelancerModStudio
             {
                 this.OpenFile(file, templateIndex);
             }
-            catch
+            catch (Exception ex)
             {
                 if (MessageBox.Show(
                         string.Format(Strings.FileErrorOpenRecent, file),
@@ -728,7 +728,7 @@ namespace FreelancerModStudio
                 {
                     case ViewerType.System:
                         // set model mode as it was reset if the editor was closed
-                        this.systemEditorForm.IsModelMode = this.mnuShowModels.Checked;
+                        this.systemEditorForm.IsModelMode = this.mnuShowModels.Checked || Helper.Settings.Data.Data.General.AutomaticallyDisplay3DModels;
                         this.systemEditorForm.ShowData(tableEditor.Data);
                         break;
                     case ViewerType.Universe:

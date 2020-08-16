@@ -117,6 +117,10 @@ namespace FreelancerModStudio.Data
             [DisplayName("Automatically Open 3D Editor")]
             public bool AutomaticallyOpen3DEditor { get; set; } = true;
 
+            [Category("INI Editor")]
+            [DisplayName("Automatically Display 3D Models")]
+            public bool AutomaticallyDisplay3DModels { get; set; } = true;
+
             [Category("INI Formatting")]
             [DisplayName("Spaces around equal sign")]
             public bool FormattingSpaces { get; set; }
