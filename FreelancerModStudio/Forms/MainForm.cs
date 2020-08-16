@@ -35,9 +35,21 @@ namespace FreelancerModStudio
             this.Icon = Resources.LogoIcon;
 
             this.GetSettings();
+            this.LoadTheme();
 
             // initialize content windows after language was set
             this.InitContentWindows();
+        }
+
+        private void LoadTheme()
+        {
+            Settings.Theme theme = Helper.Settings.Data.Data.General.Theme;
+            if (theme == Settings.Theme.Dark)
+                this.dockPanel1.Theme = new VS2015DarkTheme();
+            else if (theme == Settings.Theme.Blue)
+                this.dockPanel1.Theme = new VS2015BlueTheme();
+            else
+                this.dockPanel1.Theme = new VS2015LightTheme();
         }
 
         private void FrmMainLoad(object sender, EventArgs e)
@@ -764,7 +776,7 @@ namespace FreelancerModStudio
         private void MnuOptionsClick(object sender, EventArgs e)
         {
             OptionsForm optionsFormForm = new OptionsForm();
-            optionsFormForm.ShowDialog();
+            optionsFormForm.ShowDialog(this);
 
             // check for valid data
             Helper.Settings.Data.Data.General.CheckValidData();

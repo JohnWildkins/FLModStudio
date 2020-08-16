@@ -17,6 +17,8 @@
         {
             Helper.Settings.Save();
             SharedGeometries.LoadColors(Helper.Settings.Data.Data.General.ColorBox);
+            MainForm form = (MainForm) this.Owner;
+            MessageBox.Show("Some settings will require a restart in order to take place.", "Settings Saved.", MessageBoxButtons.OK);
         }
     }
 }

@@ -1,3 +1,5 @@
+using WeifenLuo.WinFormsUI.ThemeVS2015;
+
 namespace FreelancerModStudio.Data
 {
     using System;
@@ -38,6 +40,13 @@ namespace FreelancerModStudio.Data
             public Forms Forms = new Forms();
         }
 
+        public enum Theme
+        {
+            Light,
+            Dark,
+            Blue
+        }
+
         [DisplayName("General")]
         public class General
         {
@@ -55,6 +64,10 @@ namespace FreelancerModStudio.Data
             [Category("General")]
             [DisplayName("Fallback Freelancer DATA folder")]
             public string DefaultDataDirectory { get; set; }
+
+            [Category("General")]
+            [DisplayName("Mod Studio Theme")]
+            public Theme Theme { get; set; } = Theme.Dark;
 
             [Category("Properties")]
             [DisplayName("Sort type")]

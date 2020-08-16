@@ -305,10 +305,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DockPanelSuite\DockPanelSuite.csproj">
-      <Project>{BB650B0C-AB45-44B0-900E-6187EC208C95}</Project>
-      <Name>DockPanelSuite</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FLUtils\FLUtils.csproj">
       <Project>{2ebbca03-fab7-499a-849f-23ef97e0bd61}</Project>
       <Name>FLUtils</Name>
@@ -323,6 +319,12 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="DockPanelSuite">
+      <Version>3.0.6</Version>
+    </PackageReference>
+    <PackageReference Include="DockPanelSuite.ThemeVS2015">
+      <Version>3.0.6</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
       <Version>2.9.8</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

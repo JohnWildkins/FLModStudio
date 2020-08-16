@@ -65,6 +65,17 @@ namespace FreelancerModStudio
 
         private void OnDocumentChanged(IDocumentForm document) => this.DocumentChanged?.Invoke(document);
 
+        private void SetTheme()
+        {
+            if (Helper.Settings.Data.Data.General.Theme is Settings.Theme.Dark)
+            {
+                this.objectListView1.BackColor = Color.FromArgb(30, 30, 30);
+                this.objectListView1.ForeColor = Color.FromArgb(204, 204, 204);
+                this.objectListView1.BorderStyle = BorderStyle.None;
+                this.objectListView1.GridLines = false;
+            }
+        }
+
         public FrmTableEditor(int templateIndex, string file)
         {
             FrmTableEditor.Instance = this;
@@ -97,9 +108,7 @@ namespace FreelancerModStudio
                 this.SetFile(string.Empty);
             }
 
-            this.objectListView1.CellToolTip.InitialDelay = 1000;
-            this.objectListView1.UnfocusedHighlightBackgroundColor = this.objectListView1.HighlightBackgroundColorOrDefault;
-            this.objectListView1.UnfocusedHighlightForegroundColor = this.objectListView1.HighlightForegroundColorOrDefault;
+            this.SetTheme();
 
             SimpleDropSink dropSink = this.objectListView1.DropSink as SimpleDropSink;
             if (dropSink != null)
