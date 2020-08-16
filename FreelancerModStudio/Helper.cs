@@ -292,7 +292,7 @@ namespace FreelancerModStudio
             public static void LoadTemplates()
             {
                 // Form is closing
-                if (FrmTableEditor.Instance.IsDisposed)
+                if (FrmTableEditor.Instance?.IsDisposed ?? true)
                     return;
 
                 ToolStripMenuItem add = (ToolStripMenuItem)FrmTableEditor.Instance.TableContextMenu.Items["mnuAdd"];

@@ -36,7 +36,9 @@
 
         public void RefreshSettings() => this.presenter.SetTitle();
 
+        #pragma warning disable CA1822 // Mark members as static
         public void OpenContextMenu(Point pos) => FrmTableEditor.Instance.TableContextMenu.Show(pos);
+        #pragma warning restore CA1822 // Mark members as static
 
         public void ShowViewer(ViewerType viewerType)
         {

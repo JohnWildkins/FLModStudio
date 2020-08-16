@@ -317,6 +317,25 @@ namespace FreelancerModStudio.Data
             public Color ZonePathTradeLane { get; set; } = Color.FromRgb(0, 30, 30);
         }
 
+        /*[Category("Controls")]
+        [DisplayName("Controls")]
+        [TypeConverter(typeof(SettingsConverter))]
+        public class Controls
+        {
+            public char MoveCameraForwards { get; set; } = 'W';
+            public char MoveCameraBackwards { get; set; } = 'W';
+            public char MoveCameraLeft { get; set; } = 'W';
+            public char MoveCameraUp { get; set; } = 'W';
+            public char MoveCameraDown { get; set; } = 'W';
+            public char MoveObjectUp { get; set; } = 'W';
+            public char MoveObjectDown { get; set; } = 'W';
+            public char MoveObjectLeft { get; set; } = 'W';
+            public char MoveObjectRight { get; set; } = 'W';
+            public char FocusSelectedObject { get; set; } = 'W';
+            public char LookAtSelectedObject { get; set; } = 'W';
+            public char TrackSelectedObject { get; set; } = 'W';
+        }*/
+
         public class Forms
         {
             public Main Main = new Main();

@@ -194,7 +194,6 @@
 
             this.Viewport = viewport;
             this.Viewport.MouseDown += this.ViewportMouseDown;
-            this.Viewport.MouseUp += this.ViewportMouseUp;
             this.Viewport.MouseMove += this.ViewportMouseMove;
             this.Viewport.KeyDown += this.ViewportKeyDown;
             this.Viewport.KeyUp += this.ViewportKeyUp;
@@ -667,6 +666,14 @@
             bool isSelect = e.ChangedButton == MouseButton.Left && !isAlt;
             bool isLookAt = e.ChangedButton == MouseButton.Right && isDoubleClick;
 
+            // I literally cannot work out how this thing works. Where is rotate defined?
+            /*if (e.ChangedButton == MouseButton.Right && isCtrl)
+            {
+                Point p = e.GetPosition(this.Viewport.Viewport);
+                this.SystemEditorForm.OpenContextMenu(new global::System.Drawing.Point(Convert.ToInt32(Math.Round(p.X)), Convert.ToInt32(Math.Round(p.Y))));
+                this.StopManipulating(false);
+            }*/
+
             if (isSelect || isLookAt)
             {
                 Point3D point;
@@ -683,17 +690,6 @@
                 }
 
             }
-        }
-
-        private void ViewportMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Right)
-            {
-                Point p = e.GetPosition(this.Viewport.Viewport);
-                this.SystemEditorForm.OpenContextMenu(new global::System.Drawing.Point(Convert.ToInt32(Math.Round(p.X)), Convert.ToInt32(Math.Round(p.Y))));
-            }
-
-            this.StopManipulating(false);
         }
 
         private void UpdateSelectedBlock()
