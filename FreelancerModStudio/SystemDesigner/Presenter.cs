@@ -193,6 +193,7 @@
             this.SystemEditorForm = form;
 
             this.Viewport = viewport;
+            this.Viewport.MouseUp += this.ViewportMouseUp;
             this.Viewport.MouseDown += this.ViewportMouseDown;
             this.Viewport.MouseMove += this.ViewportMouseMove;
             this.Viewport.KeyDown += this.ViewportKeyDown;
@@ -210,6 +211,11 @@
             this.Viewport.ViewCubeBackText = "L";
 
             this.Lighting = new SystemLightsVisual3D();
+        }
+
+        private void ViewportMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            this.StopManipulating(false);
         }
 
         public void LookAt(ContentBase content) => this.Viewport.LookAt(content.GetPositionPoint(), Animator.AnimationDuration.TimeSpan.TotalMilliseconds);
