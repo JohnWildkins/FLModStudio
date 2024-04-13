@@ -306,7 +306,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FLUtils\FLUtils.csproj">
-      <Project>{2ebbca03-fab7-499a-849f-23ef97e0bd61}</Project>
+      <Project>{c3a33869-4291-4ae8-b632-99b238f21c73}</Project>
       <Name>FLUtils</Name>
     </ProjectReference>
     <ProjectReference Include="..\HelixEngine\HelixEngine.csproj">
