@@ -5,7 +5,7 @@ Freelancer modding IDE with a powerful 3D system editor
 
 Freelancer Mod Studio is a well-polished and powerful IDE for both experienced as well as beginner modders. You can easily create and edit your mods by using the visual ini editor with unlimited undo/redo, powerful clipboard functionality, multi-editing and 3D model view support. The implemented 3D system editor shows Freelancer models and supports position,rotation and scale manipulation inside the editor.
 
-Download and install the latest release [here.](https://github.com/AftermathFreelancer/FLModStudio/releases)
+Download and install the latest release [here.](https://github.com/JohnWildkins/FLModStudio/releases)
 
 In order to run this tool, you'll need .Net Framework 4.6.1.
 
@@ -35,6 +35,7 @@ In order to run this tool, you'll need .Net Framework 4.6.1.
 | Focus selected object |	F |
 | Look-at selected object |	SHIFT + F |
 | Track selected object |	T |
+| Reload page | F5 |
 
 ## Known Issues
 

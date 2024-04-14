@@ -283,7 +283,7 @@ namespace FreelancerModStudio
                 Data.Data.General.CheckValidData();
                 SharedGeometries.LoadColors(Data.Data.General.ColorBox);
 
-                if (Data.Data.General.AutoUpdate.UpdateFile == @"http://freelancermodstudio.googlecode.com/svn/trunk/updates.txt" || Data.Data.General.AutoUpdate.UpdateFile == @"https://raw.githubusercontent.com/AftermathFreelancer/FLModStudio/master/updates.txt")
+                if (Data.Data.General.AutoUpdate.UpdateFile != @"https://raw.githubusercontent.com/JohnWildkins/FLModStudio/master/updates.txt")
                     Data.Data.General.AutoUpdate.UpdateFile = @"https://raw.githubusercontent.com/JohnWildkins/FLModStudio/master/updates.txt";
             }
 

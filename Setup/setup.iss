@@ -10,18 +10,18 @@
 #include "scripts\products\dotnetfx35sp1.iss"
 
 #define MyAppSetupName 'Freelancer Mod Studio'
-#define MyAppVersion '1.3.1.1'
+#define MyAppVersion '1.3.2'
 
 [Setup]
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppSetupName} {#MyAppVersion}
-AppCopyright=Copyright © stfx 2009-2013, Freelancer Aftermath 2019-2020
+AppCopyright=Copyright © stfx 2009 - 2013, Freelancer Aftermath 2019 - 2020, DiscoveryGC 2024;
 VersionInfoVersion={#MyAppVersion}
-VersionInfoCompany=Freelancer Aftermath
-AppPublisher=Freelancer Aftermath                                             
-AppPublisherURL=https://github.com/AftermathFreelancer/FLModStudio
-AppUpdatesURL=https://raw.githubusercontent.com/AftermathFreelancer/FLModStudio/master/updates.txt
+VersionInfoCompany=DiscoveryGC
+AppPublisher=DiscoveryGC                                            
+AppPublisherURL=https://github.com/JohnWildkins/FLModStudio
+AppUpdatesURL=https://raw.githubusercontent.com/JohnWildkins/FLModStudio/master/updates.txt
 OutputBaseFilename=FreelancerModStudio-{#MyAppVersion}
 DefaultGroupName={#MyAppSetupName}
 DefaultDirName={pf}\{#MyAppSetupName}
