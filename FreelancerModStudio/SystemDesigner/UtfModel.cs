@@ -41,7 +41,7 @@
             {
                 if (part.Name == partName)
                 {
-                    return matrix*part.Matrix*GetTransform(parts, part.ParentName);
+                    return matrix * part.Matrix * GetTransform(parts, part.ParentName);
                 }
             }
 
@@ -112,18 +112,18 @@
             }
 
             GeometryModel3D gm = new GeometryModel3D
-                                     {
-                                         Geometry = new MeshGeometry3D
-                                                        {
-                                                            Positions = positions,
-                                                            TriangleIndices = indices,
-                                                            Normals = normals,
+            {
+                Geometry = new MeshGeometry3D
+                {
+                    Positions = positions,
+                    TriangleIndices = indices,
+                    Normals = normals,
 
-                                                            // TextureCoordinates = texture
-                                                        },
-                                         Material = SharedMaterials.CmpModel,
-                                         Transform = new MatrixTransform3D(meshGroup.Transform * ConversionMatrix)
-                                     };
+                    // TextureCoordinates = texture
+                },
+                Material = SharedMaterials.CmpModel,
+                Transform = new MatrixTransform3D(meshGroup.Transform * ConversionMatrix)
+            };
 
             gm.Freeze();
             return gm;
@@ -229,9 +229,9 @@
                                             fileName = Encoding.ASCII.GetString(partNode.Data).TrimEnd('\0');
                                             break;
 
-                                        // case "index":
-                                        // index = BitConverter.ToInt32(partNode.Data, 0);
-                                        // break;
+                                            // case "index":
+                                            // index = BitConverter.ToInt32(partNode.Data, 0);
+                                            // break;
                                     }
                                 }
 
@@ -311,11 +311,11 @@
                     if (meshes.TryGetValue(meshReferenceNode.MeshReference.VMeshLibId, out mesh))
                     {
                         meshGroups.Add(new MeshGroup
-                            {
-                                MeshReference = meshReferenceNode.MeshReference,
-                                Mesh = mesh,
-                                Transform = GetTransform(constructs, meshGroupName)
-                            });
+                        {
+                            MeshReference = meshReferenceNode.MeshReference,
+                            Mesh = mesh,
+                            Transform = GetTransform(constructs, meshGroupName)
+                        });
                     }
                 }
             }

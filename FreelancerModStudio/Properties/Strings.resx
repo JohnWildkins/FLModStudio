@@ -275,4 +275,10 @@ This warning can be disabled in the options menu.</value>
   <data name="InvalidIniPropertyNotificationCaption" xml:space="preserve">
     <value>Invalid INI Property</value>
   </data>
+  <data name="FileChangedSave" xml:space="preserve">
+    <value>{0}
+
+This file has been modified by another program.
+Do you want to reload it?</value>
+  </data>
 </root>

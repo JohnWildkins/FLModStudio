@@ -289,7 +289,7 @@
             VisualTreeHelper.HitTest(
                 this.Viewport.Viewport,
                 null,
-                delegate(HitTestResult hit)
+                delegate (HitTestResult hit)
                 {
                     RayMeshGeometry3DHitTestResult rayHit = hit as RayMeshGeometry3DHitTestResult;
                     if (rayHit != null)
@@ -505,7 +505,7 @@
             }
         }
 
-        private void ViewportKeyDown(object sender,  Sys.Windows.Input.KeyEventArgs e) => this.ViewportKeyEvent(e, false);
+        private void ViewportKeyDown(object sender, Sys.Windows.Input.KeyEventArgs e) => this.ViewportKeyEvent(e, false);
 
         private void ViewportKeyUp(object sender, Sys.Windows.Input.KeyEventArgs e) => this.ViewportKeyEvent(e, true);
 
@@ -801,9 +801,9 @@
                         originTM.M32,
                         originTM.M33,
                         originTM.M34,
-                        originTM.OffsetX, 
-                        originTM.OffsetY, 
-                        originTM.OffsetZ, 
+                        originTM.OffsetX,
+                        originTM.OffsetY,
+                        originTM.OffsetZ,
                         originTM.M44);
                     originInverseTM.Invert();
 
@@ -889,10 +889,10 @@
         {
             ContextMenu menu = new ContextMenu();
             MenuItem item = new MenuItem
-                {
-                    Header = string.Format(Strings.SystemPresenterOpen, Path.GetFileName(path)),
-                    Tag = path
-                };
+            {
+                Header = string.Format(Strings.SystemPresenterOpen, Path.GetFileName(path)),
+                Tag = path
+            };
             item.Click += this.ItemClick;
 
             menu.Items.Add(item);
@@ -914,7 +914,7 @@
 
             Color color = SharedMaterials.Selection;
 
-            if (this.trackedContent == this.SelectedContent[0]) 
+            if (this.trackedContent == this.SelectedContent[0])
                 color = SharedMaterials.TrackedLine;
 
             if (this.SelectionBox == null)
@@ -968,12 +968,12 @@
             else
             {
                 this.TrackedLine = new LineVisual3D
-                    {
-                        Point1 = this.SelectedContent[0].GetPositionPoint(),
-                        Point2 = this.trackedContent.GetPositionPoint(),
-                        Color = SharedMaterials.TrackedLine,
-                        DepthOffset = 1,
-                    };
+                {
+                    Point1 = this.SelectedContent[0].GetPositionPoint(),
+                    Point2 = this.trackedContent.GetPositionPoint(),
+                    Color = SharedMaterials.TrackedLine,
+                    DepthOffset = 1,
+                };
             }
         }
 
@@ -1026,14 +1026,14 @@
                 else
                 {
                     this.ManipulatorLineY = new FixedLineVisual3D
-                                                {
-                                                    Point2 = new Point3D(0, 0, 1),
-                                                    Transform = transform,
-                                                    Color = SharedMaterials.ManipulatorY,
-                                                    Thickness = 5,
-                                                    DepthOffset = 0.5,
-                                                    FixedLength = 100,
-                                                };
+                    {
+                        Point2 = new Point3D(0, 0, 1),
+                        Transform = transform,
+                        Color = SharedMaterials.ManipulatorY,
+                        Thickness = 5,
+                        DepthOffset = 0.5,
+                        FixedLength = 100,
+                    };
                 }
             }
             else
@@ -1052,14 +1052,14 @@
                 else
                 {
                     this.ManipulatorLineZ = new FixedLineVisual3D
-                                                {
-                                                    Point2 = new Point3D(0, 1, 0),
-                                                    Transform = transform,
-                                                    Color = SharedMaterials.ManipulatorZ,
-                                                    Thickness = 5,
-                                                    DepthOffset = 0.5,
-                                                    FixedLength = 100,
-                                                };
+                    {
+                        Point2 = new Point3D(0, 1, 0),
+                        Transform = transform,
+                        Color = SharedMaterials.ManipulatorZ,
+                        Thickness = 5,
+                        DepthOffset = 0.5,
+                        FixedLength = 100,
+                    };
                 }
             }
             else
@@ -1076,14 +1076,14 @@
             else
             {
                 this.ManipulatorLineX = new FixedLineVisual3D
-                                            {
-                                                Point2 = new Point3D(1, 0, 0),
-                                                Transform = transform,
-                                                Color = SharedMaterials.ManipulatorX,
-                                                Thickness = 5,
-                                                DepthOffset = 0.5,
-                                                FixedLength = 100,
-                                            };
+                {
+                    Point2 = new Point3D(1, 0, 0),
+                    Transform = transform,
+                    Color = SharedMaterials.ManipulatorX,
+                    Thickness = 5,
+                    DepthOffset = 0.5,
+                    FixedLength = 100,
+                };
             }
         }
 
@@ -1202,12 +1202,12 @@
             }
 
             Analyzer analyzer = new Analyzer
-                {
-                    Universe = systems,
-                    UniversePath = path,
-                    SystemTemplate = systemTemplate,
-                    Archetype = archetype
-                };
+            {
+                Universe = systems,
+                UniversePath = path,
+                SystemTemplate = systemTemplate,
+                Archetype = archetype
+            };
             analyzer.Analyze();
 
             this.DisplayUniverseConnections(analyzer.Connections);

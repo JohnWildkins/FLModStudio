@@ -7,6 +7,7 @@ namespace FreelancerModStudio
     using System.Drawing;
     using System.Globalization;
     using System.IO;
+    using System.Runtime.Caching;
     using System.Windows.Forms;
 
     using FLUtils;
@@ -29,16 +30,51 @@ namespace FreelancerModStudio
 
         private readonly UiCultureChanger uiCultureChanger = new UiCultureChanger();
 
+        private string LayoutFilePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Application.ProductName, Resources.LayoutPath);
+
+        private readonly MemoryCache _memCache = FastExprCache.Default;
+        private readonly CacheItemPolicy _cacheItemPolicy;
+        private const int CacheTimeMilliseconds = 1000;
+
+        private readonly FileSystemWatcher watcher = new FileSystemWatcher();
+
         public MainForm()
         {
             this.InitializeComponent();
             this.Icon = Resources.LogoIcon;
+
+            watcher.NotifyFilter = NotifyFilters.LastWrite;
+            watcher.Changed += OnExtrnlFileChange;
+            watcher.Filter = "*.ini";
+            watcher.SynchronizingObject = this;
+
+            _cacheItemPolicy = new CacheItemPolicy() { RemovedCallback = OnRemovedFromCache };
 
             this.GetSettings();
             this.LoadTheme();
 
             // initialize content windows after language was set
             this.InitContentWindows();
+        }
+
+        private void OnExtrnlFileChange(object sender, FileSystemEventArgs e)
+        {
+            _cacheItemPolicy.AbsoluteExpiration = DateTimeOffset.Now.AddMilliseconds(CacheTimeMilliseconds);
+            // Only add if it is not there already
+            if (_memCache.AddOrGetExisting(e.Name, e, _cacheItemPolicy) != null)
+            {
+                Console.WriteLine("Cache entry already exists, dropping");
+            } else
+            {
+                Console.WriteLine($"Added {e.Name} event to cache, expiry at {_cacheItemPolicy.AbsoluteExpiration}");
+            }
+        }
+
+        private void OnRemovedFromCache(CacheEntryRemovedArguments args)
+        {
+            if (args.RemovedReason != CacheEntryRemovedReason.Expired) return;
+            Console.WriteLine($"Fired refresh event at {DateTimeOffset.Now}");
+            this.Invoke(new Action(() => RefreshWindow()));
         }
 
         private void LoadTheme()
@@ -66,17 +102,18 @@ namespace FreelancerModStudio
 
             // load layout
             bool layoutLoaded = false;
-            string layoutFile = Path.Combine(
-                Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    Application.ProductName),
-                Resources.LayoutPath);
-            if (File.Exists(layoutFile))
+            string layoutFilePath = LayoutFilePath;
+            if (File.Exists(layoutFilePath))
             {
                 // don't throw an error if the layout file can't be loaded
                 try
                 {
-                    this.dockPanel1.LoadFromXml(layoutFile, this.GetContentFromPersistString);
+                    // kind-of atomic read
+                    var bs = File.ReadAllBytes(layoutFilePath);
+                    using (var ms = new MemoryStream(bs, false))
+                    {
+                        this.dockPanel1.LoadFromXml(ms, this.GetContentFromPersistString, false);
+                    }
                     layoutLoaded = true;
                 }
                 catch
@@ -145,7 +182,7 @@ namespace FreelancerModStudio
 
                 try
                 {
-                    return this.DisplayFile(parsedStrings[1], Convert.ToInt32(parsedStrings[2]));
+                    return this.DisplayFile(parsedStrings[1], Convert.ToInt32(parsedStrings[2]), true);
                 }
                 catch
                 {
@@ -161,10 +198,10 @@ namespace FreelancerModStudio
         }
 
         private void MnuVisitForumClick(object sender, EventArgs e) =>
-            Process.Start("https://github.com/AftermathFreelancer/FLModStudio");
+            Process.Start("https://github.com/JohnWildkins/FLModStudio");
 
         private void MnuReportIssueClick(object sender, EventArgs e) =>
-            Process.Start("https://github.com/AftermathFreelancer/FLModStudio/issues");
+            Process.Start("https://github.com/JohnWildkins/FLModStudio/issues");
 
         private void MnuCloseAllDocumentsClick(object sender, EventArgs e)
         {
@@ -268,20 +305,16 @@ namespace FreelancerModStudio
         private void SetSettings()
         {
             // save layout (don't throw an error if it fails)
-            string layoutFile = Path.Combine(
-                Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    Application.ProductName),
-                Resources.LayoutPath);
+            string layoutFilePath = LayoutFilePath;
             try
             {
-                string directory = Path.GetDirectoryName(layoutFile);
-                if (directory != null && !Directory.Exists(directory))
+                Directory.CreateDirectory(Path.GetDirectoryName(layoutFilePath));
+                using (var ms = new MemoryStream())
                 {
-                    Directory.CreateDirectory(directory);
+                    this.dockPanel1.SaveAsXml(ms, System.Text.Encoding.Unicode, false);
+                    // try to make write kind-of atomic
+                    File.WriteAllBytes(layoutFilePath, ms.ToArray());
                 }
-
-                this.dockPanel1.SaveAsXml(layoutFile);
             }
 
             // ReSharper disable EmptyGeneralCatchClause
@@ -351,7 +384,8 @@ namespace FreelancerModStudio
                 ToolStripMenuItem fullScreenMenuItem = new ToolStripMenuItem(
                                                            this.mnuFullScreen.Text,
                                                            this.mnuFullScreen.Image,
-                                                           this.MnuFullScreenClick) { Checked = true };
+                                                           this.MnuFullScreenClick)
+                { Checked = true };
                 this.MainMenuStrip.Items.Add(fullScreenMenuItem);
 
                 Helper.Settings.Data.Data.Forms.Main.Location = this.Location;
@@ -530,7 +564,7 @@ namespace FreelancerModStudio
             }
         }
 
-        private FrmTableEditor DisplayFile(string file, int templateIndex)
+        private FrmTableEditor DisplayFile(string file, int templateIndex, bool fireOpenEvent = false)
         {
             this.Text = $"Freelancer Mod Studio - {file}";
             FrmTableEditor tableEditor = new FrmTableEditor(templateIndex, file);
@@ -547,6 +581,11 @@ namespace FreelancerModStudio
             if (tableEditor.CanDisplay3DViewer() && Helper.Settings.Data.Data.General.AutomaticallyOpen3DEditor)
             {
                 this.Open3DSystemEditor(tableEditor);
+            }
+
+            if (fireOpenEvent)
+            {
+                this.FileOpened(file);
             }
 
             return tableEditor;
@@ -843,6 +882,8 @@ namespace FreelancerModStudio
                 {
                     if (tableEditor.File.Equals(file, StringComparison.OrdinalIgnoreCase))
                     {
+                        watcher.Path = Path.GetDirectoryName(file);
+                        watcher.EnableRaisingEvents = true;
                         return i;
                     }
                 }
@@ -894,7 +935,9 @@ namespace FreelancerModStudio
             {
                 try
                 {
+                    watcher.EnableRaisingEvents = false;
                     document.Save();
+                    watcher.EnableRaisingEvents = true;
                 }
                 catch (Exception ex)
                 {
@@ -910,7 +953,9 @@ namespace FreelancerModStudio
             {
                 try
                 {
+                    watcher.EnableRaisingEvents = false;
                     document.SaveAs();
+                    watcher.EnableRaisingEvents = true;
                 }
                 catch (Exception ex)
                 {
@@ -1239,7 +1284,7 @@ namespace FreelancerModStudio
         }
 
         private void Mnu3dEditorClick(object sender, EventArgs e)
-        { 
+        {
             Open3DSystemEditor();
         }
 
@@ -1355,6 +1400,33 @@ namespace FreelancerModStudio
                 if (!form.IsDisposed)
                     return;
             }
+        }
+
+        private void mnuRefresh_Click(object sender, EventArgs e) => RefreshWindow();
+
+        private void RefreshWindow()
+        {
+            foreach (IDockContent document in this.dockPanel1.Documents)
+            {
+                FrmTableEditor tableEditor = document as FrmTableEditor;
+                if (tableEditor == null) continue;
+                if (tableEditor.undoManager.IsModified())
+                {
+                    DialogResult dialogResult = MessageBox.Show(string.Format(Strings.FileChangedSave, tableEditor.GetFileName()), AssemblyUtils.Name, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (dialogResult == DialogResult.No)
+                    {
+                        return;
+                    }
+
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        tableEditor.undoManager.SetAsSaved();
+                    }
+                }
+            }
+            string file = this.GetDocument().File;
+            this.dockPanel1.ActiveDocument?.DockHandler.Close();
+            this.OpenFile(file);
         }
     }
 }

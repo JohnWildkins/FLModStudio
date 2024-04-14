@@ -9,7 +9,10 @@ namespace FreelancerModStudio.Data
     {
         public static object Load(string path, Type type)
         {
-            return Load(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read), type);
+            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return Load(fs, type);
+            }
         }
 
         public static object Load(Stream stream, Type type)
@@ -26,7 +29,10 @@ namespace FreelancerModStudio.Data
 
         public static void Save(string path, object o, Type type)
         {
-            Save(new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Write), o, type);
+            using (var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Write))
+            {
+                Save(fs, o, type);
+            }
         }
 
         public static void Save(Stream stream, object o, Type type)

@@ -975,7 +975,7 @@ namespace FreelancerModStudio
 
         public ToolStripDropDown MultipleAddDropDown() => this.mnuAdd.DropDown;
 
-        private string GetFileName() => this.File.Length == 0 ? this.File : Path.GetFileName(this.File);
+        public string GetFileName() => this.File.Length == 0 ? this.File : Path.GetFileName(this.File);
 
         public string GetTitle() => this.File.Length == 0 ? Strings.FileEditorNewFile : Path.GetFileName(this.File);
 

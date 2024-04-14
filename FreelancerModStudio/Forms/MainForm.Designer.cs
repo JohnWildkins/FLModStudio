@@ -116,6 +116,8 @@
             this.mnuCopyFullPathSeperator = new System.Windows.Forms.ToolStripSeparator();
             this.mnuCopyFullPath = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuOpenContainingFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.mnuRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripPanel2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -159,6 +161,8 @@
             this.mnuClose,
             this.mnuCloseMod,
             this.mnuSaveSeperator,
+            this.mnuRefresh,
+            this.toolStripSeparator1,
             this.mnuSave,
             this.mnuSaveAs,
             this.mnuSaveAll,
@@ -695,6 +699,17 @@
             this.mnuOpenContainingFolder.Name = "mnuOpenContainingFolder";
             this.mnuOpenContainingFolder.Click += new System.EventHandler(this.MnuOpenContainingFolderClick);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+            // 
+            // mnuRefresh
+            // 
+            this.mnuRefresh.Name = "mnuRefresh";
+            resources.ApplyResources(this.mnuRefresh, "mnuRefresh");
+            this.mnuRefresh.Click += new System.EventHandler(this.mnuRefresh_Click);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -805,6 +820,8 @@
         private ToolStripMenuItem MnuCloseAllToLeft;
         private ToolStripMenuItem MnuCloseAllToRight;
         private ToolStripMenuItem MnuCloseAllUnchanged;
+        private ToolStripMenuItem mnuRefresh;
+        private ToolStripSeparator toolStripSeparator1;
     }
 }
 
