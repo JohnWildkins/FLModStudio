@@ -36,17 +36,13 @@ namespace FreelancerModStudio
         private readonly CacheItemPolicy _cacheItemPolicy;
         private const int CacheTimeMilliseconds = 1000;
 
-        private readonly FileSystemWatcher watcher = new FileSystemWatcher();
+        // but who watches the watchers
+        private Dictionary<string, FileSystemWatcher> watchers = new Dictionary<string, FileSystemWatcher>();
 
         public MainForm()
         {
             this.InitializeComponent();
             this.Icon = Resources.LogoIcon;
-
-            watcher.NotifyFilter = NotifyFilters.LastWrite;
-            watcher.Changed += OnExtrnlFileChange;
-            watcher.Filter = "*.ini";
-            watcher.SynchronizingObject = this;
 
             _cacheItemPolicy = new CacheItemPolicy() { RemovedCallback = OnRemovedFromCache };
 
@@ -57,24 +53,45 @@ namespace FreelancerModStudio
             this.InitContentWindows();
         }
 
+        private void CreateWatcher(string path)
+        {
+            if (watchers.ContainsKey(path)) return;
+            FileSystemWatcher newWatcher = new FileSystemWatcher()
+            {
+                NotifyFilter = NotifyFilters.LastWrite,
+                Filter = "*.ini",
+                SynchronizingObject = this,
+                Path = Path.GetDirectoryName(path),
+            };
+            newWatcher.Changed += OnExtrnlFileChange;
+            newWatcher.EnableRaisingEvents = true;
+            watchers.Add(path, newWatcher);
+        }
+
+        private void PauseWatcher(string path) => watchers[path].EnableRaisingEvents = false;
+
+        private void ResumeWatcher(string path) => watchers[path].EnableRaisingEvents = true;
+
+        internal void DestroyWatcher(string path)
+        {
+            if (watchers.TryGetValue(path, out FileSystemWatcher fsw))
+            {
+                watchers.Remove(path);
+                fsw.Dispose();
+            }
+        }
+
         private void OnExtrnlFileChange(object sender, FileSystemEventArgs e)
         {
             _cacheItemPolicy.AbsoluteExpiration = DateTimeOffset.Now.AddMilliseconds(CacheTimeMilliseconds);
             // Only add if it is not there already
-            if (_memCache.AddOrGetExisting(e.Name, e, _cacheItemPolicy) != null)
-            {
-                Console.WriteLine("Cache entry already exists, dropping");
-            } else
-            {
-                Console.WriteLine($"Added {e.Name} event to cache, expiry at {_cacheItemPolicy.AbsoluteExpiration}");
-            }
+            _memCache.AddOrGetExisting(e.Name, e, _cacheItemPolicy);
         }
 
         private void OnRemovedFromCache(CacheEntryRemovedArguments args)
         {
             if (args.RemovedReason != CacheEntryRemovedReason.Expired) return;
-            Console.WriteLine($"Fired refresh event at {DateTimeOffset.Now}");
-            this.Invoke(new Action(() => RefreshWindow()));
+            this.Invoke(new Action(() => RefreshWindow(args.CacheItem.Key)));
         }
 
         private void LoadTheme()
@@ -875,6 +892,7 @@ namespace FreelancerModStudio
         private int FileOpened(string file)
         {
             int i = 0;
+            CreateWatcher(file);
             foreach (IDockContent document in this.dockPanel1.Documents)
             {
                 FrmTableEditor tableEditor = document as FrmTableEditor;
@@ -882,8 +900,6 @@ namespace FreelancerModStudio
                 {
                     if (tableEditor.File.Equals(file, StringComparison.OrdinalIgnoreCase))
                     {
-                        watcher.Path = Path.GetDirectoryName(file);
-                        watcher.EnableRaisingEvents = true;
                         return i;
                     }
                 }
@@ -935,9 +951,9 @@ namespace FreelancerModStudio
             {
                 try
                 {
-                    watcher.EnableRaisingEvents = false;
+                    PauseWatcher(document.File);
                     document.Save();
-                    watcher.EnableRaisingEvents = true;
+                    ResumeWatcher(document.File);
                 }
                 catch (Exception ex)
                 {
@@ -953,9 +969,9 @@ namespace FreelancerModStudio
             {
                 try
                 {
-                    watcher.EnableRaisingEvents = false;
+                    PauseWatcher(document.File);
                     document.SaveAs();
-                    watcher.EnableRaisingEvents = true;
+                    ResumeWatcher(document.File);
                 }
                 catch (Exception ex)
                 {
@@ -1406,10 +1422,15 @@ namespace FreelancerModStudio
 
         private void RefreshWindow()
         {
+            RefreshWindow(GetDocument().GetTitle());
+        }
+
+        private void RefreshWindow(string fileName)
+        {
             foreach (IDockContent document in this.dockPanel1.Documents)
             {
                 FrmTableEditor tableEditor = document as FrmTableEditor;
-                if (tableEditor == null) continue;
+                if (tableEditor == null || fileName != tableEditor.GetFileName()) continue;
                 if (tableEditor.undoManager.IsModified())
                 {
                     DialogResult dialogResult = MessageBox.Show(string.Format(Strings.FileChangedSave, tableEditor.GetFileName()), AssemblyUtils.Name, MessageBoxButtons.YesNo, MessageBoxIcon.Question);

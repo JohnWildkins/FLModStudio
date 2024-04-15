@@ -522,6 +522,9 @@ namespace FreelancerModStudio
                 }
             }
 
+            MainForm mf = (MainForm)ParentForm;
+            mf.DestroyWatcher(File);
+
             return false;
         }
 
